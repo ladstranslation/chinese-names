@@ -2,6 +2,7 @@
   "name": "google-translate-api",
   "version": "2.3.0",
   "description": "A free and unlimited API for Google Translate",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "xo && nyc ava",
