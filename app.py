@@ -4450,93 +4450,7 @@ NAMES_DATA = {
   }
 }
 
-def create_phonetic_conversion(name):
-    """
-    Basic phonetic conversion for names not in database
-    This is a simple fallback system
-    """
-    # Basic syllable to pinyin mapping
-    syllable_map = {
-        'a': 'ā', 'ah': 'ā', 'an': 'ān', 'ang': 'áng',
-        'ba': 'bā', 'be': 'bèi', 'ben': 'běn', 'bi': 'bì',
-        'ca': 'kǎ', 'che': 'chè', 'chi': 'chí', 'chu': 'chū',
-        'da': 'dá', 'de': 'dé', 'di': 'dì', 'du': 'dù',
-        'e': 'é', 'en': 'ēn', 'er': 'ěr',
-        'fa': 'fǎ', 'fei': 'fēi', 'fu': 'fú',
-        'ga': 'gā', 'ge': 'gé', 'gu': 'gǔ',
-        'ha': 'hā', 'he': 'hé', 'hu': 'hú',
-        'ji': 'jí', 'jia': 'jiā', 'jie': 'jiē',
-        'ka': 'kǎ', 'ke': 'kě', 'ku': 'kù',
-        'la': 'lā', 'le': 'lè', 'li': 'lì', 'lu': 'lù',
-        'ma': 'mā', 'me': 'mé', 'mi': 'mì', 'mu': 'mù',
-        'na': 'nà', 'ne': 'né', 'ni': 'nì', 'nu': 'nù',
-        'pa': 'pā', 'pe': 'pé', 'pi': 'pì', 'pu': 'pù',
-        'qi': 'qí', 'qu': 'qù',
-        'ra': 'lā', 're': 'lè', 'ri': 'lì', 'ru': 'lù',
-        'sa': 'sā', 'se': 'sè', 'si': 'sī', 'su': 'sū',
-        'ta': 'tā', 'te': 'tè', 'ti': 'tì', 'tu': 'tù',
-        'wa': 'wā', 'we': 'wé', 'wi': 'wì', 'wu': 'wù',
-        'xi': 'xī', 'xu': 'xù',
-        'ya': 'yā', 'ye': 'yè', 'yi': 'yì', 'yu': 'yù',
-        'za': 'zā', 'ze': 'zé', 'zi': 'zì', 'zu': 'zù'
-    }
-    
-    # Basic character mapping for common sounds
-    char_map = {
-        'a': '阿', 'an': '安', 'ai': '爱',
-        'ba': '巴', 'be': '贝', 'bi': '碧',
-        'ca': '卡', 'che': '切', 'chi': '琪',
-        'da': '达', 'de': '德', 'di': '蒂',
-        'e': '娥', 'er': '尔',
-        'fa': '法', 'fei': '菲', 'fu': '福',
-        'ga': '加', 'ge': '格', 'gu': '古',
-        'ha': '哈', 'he': '河', 'hu': '胡',
-        'ja': '嘉', 'je': '杰', 'ji': '吉', 'ju': '珠',
-        'ka': '卡', 'ke': '克', 'ku': '库',
-        'la': '拉', 'le': '乐', 'li': '丽', 'lu': '露',
-        'ma': '玛', 'me': '美', 'mi': '蜜', 'mu': '暮',
-        'na': '娜', 'ne': '内', 'ni': '妮', 'nu': '努',
-        'pa': '帕', 'pe': '佩', 'pi': '琵', 'pu': '普',
-        'ra': '拉', 're': '热', 'ri': '日', 'ru': '如',
-        'sa': '萨', 'se': '色', 'si': '丝', 'su': '苏',
-        'ta': '塔', 'te': '特', 'ti': '蒂', 'tu': '图',
-        'wa': '瓦', 'we': '维', 'wi': '威', 'wu': '吴',
-        'ya': '雅', 'ye': '叶', 'yi': '意', 'yu': '玉',
-        'za': '扎', 'ze': '泽', 'zi': '子', 'zu': '祖'
-    }
-    
-    # Simple algorithm to break name into syllables and convert
-    name_lower = name.lower()
-    syllables = re.findall(r'[aeiou]+[bcdfghjklmnpqrstvwxyz]*|[bcdfghjklmnpqrstvwxyz]+[aeiou]+', name_lower)
-    
-    if not syllables:
-        syllables = [name_lower]
-    
-    chinese_chars = []
-    pinyin_parts = []
-    meaning_parts = []
-    
-    for syllable in syllables:
-        # Try exact match first
-        if syllable in char_map:
-            chinese_chars.append(char_map[syllable])
-            pinyin_parts.append(syllable_map.get(syllable, syllable))
-            meaning_parts.append("phonetic")
-        else:
-            # Try partial matches
-            found = False
-            for key in char_map:
-                if syllable.startswith(key):
-                    chinese_chars.append(char_map[key])
-                    pinyin_parts.append(syllable_map.get(key, key))
-                    meaning_parts.append("phonetic")
-                    found = True
-                    break
-            
-            if not found:
-                # Default fallback
-                chinese_chars.append('阿')
-                pinyin_parts.append('ā')
+ā')
                 meaning_parts.append("phonetic approximation")
     
     return {
@@ -4546,9 +4460,9 @@ def create_phonetic_conversion(name):
         'source': 'phonetic'
     }
 
-def search_names(query, limit=10):
+def search_names(query, gender='neutral', limit=10):
     """
-    Search for names using fuzzy matching
+    Search for names using fuzzy matching and phonetic conversion
     Returns both exact matches from database and phonetic conversions
     """
     if not query:
@@ -4571,17 +4485,19 @@ def search_names(query, limit=10):
                 'source': 'curated'
             })
     
-    # If we have fewer than 3 results, add phonetic conversion
-    if len(results) < 3:
-        phonetic_result = create_phonetic_conversion(query)
-        phonetic_result.update({
-            'name': query.title(),
-            'score': 50,  # Lower score to indicate it's phonetic
-            'source': 'phonetic'
-        })
-        results.append(phonetic_result)
+    # Always add phonetic conversion as an option
+    phonetic_result = create_phonetic_conversion(query, gender)
+    phonetic_result.update({
+        'name': query.title(),
+        'score': 55,  # Lower score to indicate it's phonetic
+        'source': 'phonetic'
+    })
+    results.append(phonetic_result)
     
-    return results
+    # Sort by score (curated matches first due to higher scores)
+    results.sort(key=lambda x: x['score'], reverse=True)
+    
+    return results[:limit]
 
 @app.route('/')
 def index():
@@ -4590,14 +4506,20 @@ def index():
 @app.route('/api/search')
 def api_search():
     query = request.args.get('q', '').strip()
+    gender = request.args.get('gender', 'neutral').strip()
     limit = int(request.args.get('limit', 10))
     
     if not query:
         return jsonify({'error': 'No query provided'}), 400
     
-    results = search_names(query, limit)
+    # Validate gender parameter
+    if gender not in ['female', 'male', 'neutral']:
+        gender = 'neutral'
+    
+    results = search_names(query, gender, limit)
     return jsonify({
         'query': query,
+        'gender': gender,
         'results': results,
         'total_names': len(NAMES_DATA)
     })
