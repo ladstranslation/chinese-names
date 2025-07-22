@@ -84,6 +84,42 @@
             color: #9ca3af;
         }
 
+        .gender-selection {
+            margin-top: 16px;
+        }
+
+        .gender-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .gender-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #6b7280;
+            transition: color 0.15s ease;
+        }
+
+        .gender-option:hover {
+            color: #374151;
+        }
+
+        .gender-option input[type="radio"] {
+            margin-right: 6px;
+            accent-color: #3b82f6;
+        }
+
         .search-icon {
             position: absolute;
             right: 12px;
@@ -91,6 +127,46 @@
             transform: translateY(-50%);
             color: #9ca3af;
             pointer-events: none;
+        }
+
+        .gender-selection {
+            margin-top: 16px;
+        }
+
+        .gender-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .gender-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #6b7280;
+            transition: color 0.15s ease;
+        }
+
+        .gender-option:hover {
+            color: #374151;
+        }
+
+        .gender-option input[type="radio"] {
+            margin-right: 6px;
+            accent-color: #3b82f6;
+        }
+
+        .gender-text {
+            user-select: none;
         }
 
         .results-section {
@@ -270,6 +346,14 @@
                 padding: 10px 14px;
             }
 
+            .gender-options {
+                gap: 12px;
+            }
+
+            .gender-option {
+                font-size: 13px;
+            }
+
             .result-card {
                 padding: 12px;
             }
@@ -355,6 +439,18 @@
             }
 
             .search-label {
+                color: #e5e7eb;
+            }
+
+            .gender-label {
+                color: #e5e7eb;
+            }
+
+            .gender-option {
+                color: #9ca3af;
+            }
+
+            .gender-option:hover {
                 color: #e5e7eb;
             }
 
@@ -512,6 +608,7 @@
 
         function handleSearch() {
             const query = nameInput.value.trim();
+            const gender = document.querySelector('input[name="gender"]:checked').value;
             
             if (!query) {
                 resultsSection.innerHTML = `
@@ -526,7 +623,7 @@
             searchTimeout = setTimeout(() => {
                 displayLoading();
                 
-                fetch(`/api/search?q=${encodeURIComponent(query)}&limit=5`)
+                fetch(`/api/search?q=${encodeURIComponent(query)}&gender=${gender}&limit=5`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.error) {
@@ -553,6 +650,11 @@
             if (e.key === 'Enter') {
                 handleSearch();
             }
+        });
+
+        // Handle gender change
+        document.querySelectorAll('input[name="gender"]').forEach(radio => {
+            radio.addEventListener('change', handleSearch);
         });
     </script>
 </body>
